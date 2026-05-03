@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Brand palette — dark, vibrant, Gen Z */
+  --bg-primary: #0a0a0f;
+  --bg-card: #12121a;
+  --bg-elevated: #1a1a2e;
+  --bg-glass: rgba(26, 26, 46, 0.7);
+
+  --accent-orange: #ff6b35;
+  --accent-pink: #ff2d7b;
+  --accent-purple: #7c3aed;
+  --accent-cyan: #06d6a0;
+  --accent-yellow: #ffd60a;
+
+  --text-primary: #f0f0f5;
+  --text-secondary: #8e8ea0;
+  --text-muted: #4a4a5a;
+
+  --gradient-fire: linear-gradient(135deg, #ff6b35, #ff2d7b);
+  --gradient-ocean: linear-gradient(135deg, #7c3aed, #06d6a0);
+  --gradient-gold: linear-gradient(135deg, #ffd60a, #ff6b35);
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-glow: rgba(124, 58, 237, 0.3);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+/* Glass card base */
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: var(--gradient-fire);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pulse animation for live indicators */
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pulse-live {
+  animation: pulse-live 1.5s ease-in-out infinite;
+}
+
+/* Slide up animation for cards */
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out forwards;
+}
+
+/* Glow effect */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.4); }
+}
+
+.glow-effect {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Vote bar animation */
+@keyframes expand-bar {
+  from { width: 0%; }
+}
+
+.animate-bar {
+  animation: expand-bar 0.8s ease-out forwards;
+}
+
+/* Shake animation for CTA */
+@keyframes micro-shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-2deg); }
+  75% { transform: rotate(2deg); }
+}
+
+.shake-cta:hover {
+  animation: micro-shake 0.3s ease-in-out;
+}
+
+/* Bottom nav safe area */
+.pb-nav {
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Hide scrollbar but keep scrolling */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── TipTap Rich Text Editor ── */
+.prose-editor {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.prose-editor p {
+  margin-bottom: 0.5em;
+}
+
+.prose-editor strong {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.prose-editor em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.prose-editor ul {
+  list-style-type: disc;
+  padding-left: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.prose-editor ol {
+  list-style-type: decimal;
+  padding-left: 1.2em;
+  margin-bottom: 0.5em;
+}
+
+.prose-editor li {
+  margin-bottom: 0.2em;
+}
+
+.prose-editor blockquote {
+  border-left: 3px solid var(--accent-purple);
+  padding-left: 0.75em;
+  margin: 0.5em 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* TipTap placeholder */
+.ProseMirror .is-editor-empty:first-child::before,
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--text-muted);
+  pointer-events: none;
+  height: 0;
+}
