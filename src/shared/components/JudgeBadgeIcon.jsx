@@ -1,6 +1,7 @@
 'use client';
 
-import { getBadgeLabel } from '@/shared/utils/hinglishCopy';
+import { useAuth } from '@/modules/auth/AuthContext';
+import { getBadgeLabel } from '@/shared/utils/i18n';
 import { Scale, Brain, Heart, Zap, UserPlus } from 'lucide-react';
 
 const BADGE_CONFIG = {
@@ -15,6 +16,7 @@ const BADGE_CONFIG = {
  * Judge badge icon — identity marker shown on profiles and share cards.
  */
 export default function JudgeBadgeIcon({ badge = 'none', size = 'md', showLabel = true }) {
+  const { languagePreference } = useAuth();
   const config = BADGE_CONFIG[badge] || BADGE_CONFIG.none;
   const Icon = config.icon;
 
@@ -28,7 +30,7 @@ export default function JudgeBadgeIcon({ badge = 'none', size = 'md', showLabel 
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-full font-semibold ${config.bg} ${config.color} ${sizeClasses[size]}`}>
       <Icon size={iconSizes[size]} strokeWidth={2} />
-      {showLabel && <span>{getBadgeLabel(badge)}</span>}
+      {showLabel && <span>{getBadgeLabel(badge, languagePreference)}</span>}
     </span>
   );
 }

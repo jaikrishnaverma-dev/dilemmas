@@ -1,6 +1,6 @@
 'use client';
 
-import { COPY } from '@/shared/utils/hinglishCopy';
+import { useAuth } from '@/modules/auth/AuthContext';
 import { Share2, MessageCircle, Copy, ExternalLink } from 'lucide-react';
 
 /**
@@ -8,6 +8,7 @@ import { Share2, MessageCircle, Copy, ExternalLink } from 'lucide-react';
  * The share card is identity-first: "Maine kaha X — Y% India agrees"
  */
 export default function ShareButton({ shareData, variant = 'default' }) {
+  const { copy } = useAuth();
   const { caseTitle, side, agreePercent, fullUrl, caseSlug } = shareData || {};
 
   // Ensure we have a clean URL for sharing/copying
@@ -16,8 +17,8 @@ export default function ShareButton({ shareData, variant = 'default' }) {
     : '');
 
   // Construct a punchy, Gen-Z friendly share message
-  const sideText = side ? `${COPY.share.cardTitle} ${side}` : 'Maine verdict diya';
-  const shareText = `${sideText} — ${agreePercent}% ${COPY.share.agreesWith}!\n\nKya tu agree karta hai? Check kar 👇`;
+  const sideText = side ? `${copy.share.cardTitle} ${side}` : 'Maine verdict diya';
+  const shareText = `${sideText} \u2014 ${agreePercent}% ${copy.share.agreesWith}!\n\nKya tu agree karta hai? Check kar \uD83D\uDC47`;
 
   const handleWhatsApp = () => {
     // Social platforms need the URL and Text combined in the 'text' parameter

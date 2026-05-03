@@ -1,12 +1,14 @@
 'use client';
 
-import { getSideLabel } from '@/shared/utils/hinglishCopy';
+import { useAuth } from '@/modules/auth/AuthContext';
+import { getSideLabel } from '@/shared/utils/i18n';
 
 /**
  * 3-way vote split bar — the signature UI element.
  * Shows teri_galti / uski_galti / situation_galat as colored segments.
  */
 export default function VerdictSplitBar({ voteSplit = {}, totalVotes = 0, compact = false }) {
+  const { languagePreference } = useAuth();
   const teri = voteSplit.teri_galti || 0;
   const uski = voteSplit.uski_galti || 0;
   const situ = voteSplit.situation_galat || 0;
@@ -45,9 +47,9 @@ export default function VerdictSplitBar({ voteSplit = {}, totalVotes = 0, compac
       {/* Labels */}
       {!compact && (
         <div className="flex justify-between mt-1.5 text-xs">
-          <span className="text-[var(--accent-orange)] font-medium">{getSideLabel('teri_galti')} {teriPct}%</span>
-          <span className="text-[var(--accent-purple)] font-medium">{getSideLabel('uski_galti')} {uskiPct}%</span>
-          <span className="text-[var(--accent-cyan)] font-medium">{getSideLabel('situation_galat')} {situPct}%</span>
+          <span className="text-[var(--accent-orange)] font-medium">{getSideLabel('teri_galti', languagePreference)} {teriPct}%</span>
+          <span className="text-[var(--accent-purple)] font-medium">{getSideLabel('uski_galti', languagePreference)} {uskiPct}%</span>
+          <span className="text-[var(--accent-cyan)] font-medium">{getSideLabel('situation_galat', languagePreference)} {situPct}%</span>
         </div>
       )}
     </div>

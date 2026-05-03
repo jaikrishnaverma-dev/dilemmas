@@ -2,7 +2,18 @@
 
 **Your side deserves to be heard. India judges it.**
 
-Dilemmas is an anonymous life-dilemma judgment platform built for Indian Gen Z. Users submit real situations from their lives—friendship conflicts, family pressure, relationship drama—and the community picks a side, providing one-line reasoning. Every interaction is designed around psychological triggers: catharsis, validation, and identity formation.
+Dilemmas is a high-engagement, anonymous life-dilemma judgment platform built for the Indian community. Users submit real situations from their lives—friendship conflicts, family pressure, relationship drama—and the community picks a side, providing one-line reasoning.
+
+---
+
+## 🌍 Multilingual by Design
+The platform is built to speak your language. Switch seamlessly between:
+- **English**: Standard professional experience.
+- **Hinglish**: Conversational, Gen-Z friendly mix of Hindi and English.
+- **Hindi (हिंदी)**: Native Hindi experience.
+- **Telugu (తెలుగు)**: Native Telugu experience.
+
+All text labels, filters, categories, and validation messages are dynamically localized.
 
 ---
 
@@ -11,86 +22,77 @@ Dilemmas is an anonymous life-dilemma judgment platform built for Indian Gen Z. 
 ### 📝 Case Submission
 An anonymous 3-step form where users share their stories.
 - **The Hook:** Compelling titles and context.
-- **Moderation:** Cases are reviewed before going live.
+- **Rich Text:** Support for formatting and tagging users in stories.
 - **Expiry:** Cases automatically expire in 48 hours to maintain urgency.
 
 ### 🧵 Verdict Feed
 An infinite scroll of live cases.
 - **Real-time Counters:** Ticking votes and time-remaining badges.
-- **Hot Cases:** Trending cases with high vote velocity float to the top.
-- **Filters:** Filter by city, category, or trending status.
+- **Hot Cases:** Trending cases with high vote velocity.
+- **Dynamic Filters:** Filter by city, category, or language preference.
 
 ### 🗳️ Verdict Engine
 The core interaction loop.
 - **3-Side Voting:** "Teri galti" (Your fault), "Uski galti" (Their fault), or "Situation hi galat" (The situation was wrong).
-- **Forced Reasoning:** Users must provide a one-line reason before their vote is registered, ensuring meaningful engagement.
-- **Instant Splits:** City and gender-wise breakdowns are revealed immediately after voting.
+- **Forced Reasoning:** Users must provide a one-line reason before their vote is registered.
+- **Results Breakdown:** City-wise breakdowns revealed immediately after voting.
 
 ### 🏆 Judge Score & Identity
 Build your reputation as a fair judge.
 - **Judge Score:** Earn points when submitters rate your verdict as "fair."
 - **Badges:** Unlock unique identities like *Nyayadhish* (Balanced), *Street Smart* (Practical), *Dil Se* (Emotional), or *Devil's Advocate* (Contrarian).
-- **Leaderboards:** Compete on city-wise leaderboards for status.
+- **Leaderboards:** City-wise leaderboards for status.
 
 ### 📤 Share Engine
-Sharing is about identity, not just content.
 - **Share Cards:** Auto-generated cards showing your verdict + the % of India that agreed with you.
-- **Social Currency:** "Maine kaha teri galti — 64% India mere saath hai."
 - **Recruit Loop:** Shared links bring new users directly into the voting flow.
-
----
-
-## 🧠 UX Principles
-
-- **No Login Wall:** Browse and vote instantly. Account creation is only needed for tracking your Judge Score.
-- **Hinglish UI:** The platform speaks like a friend, using conversational Hinglish (*"Verdict do"*, *"Bhai sahi bola"*).
-- **City War Rooms:** Activates regional pride by showing how different cities (e.g., Delhi vs Lucknow) judged the same case.
-- **Loss Aversion:** 48-hour case expiry creates a "miss it and it's gone" FOMO effect.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** Next.js (App Router), Tailwind CSS
-- **Backend:** Next.js API Routes
-- **Database:** MongoDB
-- **Authentication:** JWT (JSON Web Tokens)
-- **Styling:** Custom CSS & Premium UI components
+- **Framework:** [Next.js 16.2+](https://nextjs.org/) (App Router, Turbopack)
+- **Styling:** Custom CSS with Premium Aesthetics (Glassmorphism, Vibrant Gradients)
+- **Database:** [MongoDB](https://www.mongodb.com/)
+- **Authentication:** JWT (JSON Web Tokens) with AuthContext provider
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Editor:** [TipTap](https://tiptap.dev/) for rich text submission
 
 ---
 
 ## 🚦 Getting Started
 
-First, install the dependencies:
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-```bash
-npm install
-```
+2. **Configure Environment:**
+   Create a `.env.local` file with:
+   ```env
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   ```
 
-Then, run the development server:
+3. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
 
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the platform.
 
 ---
 
 ## 📂 Project Structure
 
 - `src/app`: Next.js App Router pages and API routes.
-- `src/modules`: Core feature modules (Auth, Feed, etc.).
-- `src/shared`: Reusable components, hooks, and utilities.
+- `src/modules`: Core feature modules (Auth, Feed, Profile).
+- `src/shared`: 
+    - `locales`: Unicode-safe translation files (`en`, `hi`, `te`, `hinglish`).
+    - `components`: Reusable UI elements (BottomNav, TopBar, VerdictSplitBar).
+    - `utils`: i18n helpers, time formatting, api client.
 - `src/lib`: Database models and server-side logic.
-- `database`: Seed scripts and database configurations.
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
----
-
-Built with ❤️ for the Indian Gen Z community.
+Built with ❤️ for the Indian community.

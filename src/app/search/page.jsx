@@ -8,12 +8,14 @@ import TopBar from '@/shared/components/TopBar';
 import BottomNav from '@/shared/components/BottomNav';
 import TimeLeftBadge from '@/shared/components/TimeLeftBadge';
 import { api } from '@/shared/api/apiClient';
+import { useAuth } from '@/modules/auth/AuthContext';
 import { formatCount } from '@/shared/utils/formatPercent';
 import { timeAgo } from '@/shared/utils/timeAgo';
 import LeaderboardSection from '@/shared/components/LeaderboardSection';
 
 export default function SearchPage() {
   const router = useRouter();
+  const { copy } = useAuth();
   const inputRef = useRef(null);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState({ cases: [], users: [] });
@@ -67,7 +69,7 @@ export default function SearchPage() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search cases, users, cities..."
+            placeholder={copy.search.placeholder}
             className="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-2xl pl-12 pr-12 py-4
               text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
               focus:outline-none focus:border-[var(--accent-purple)] transition-all shadow-lg shadow-black/10"
@@ -99,7 +101,7 @@ export default function SearchPage() {
                     ? 'bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-pink)] text-white'
                     : 'bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}`}
               >
-                <Icon size={12} /> {tab.label}
+                <Icon size={12} /> {tab.key === 'all' ? copy.search.all : tab.key === 'cases' ? copy.search.cases : copy.search.users}
               </button>
             );
           })}
@@ -118,8 +120,8 @@ export default function SearchPage() {
             {totalResults === 0 ? (
               <div className="glass-card p-8 text-center animate-slide-up">
                 <SearchIcon size={40} className="mx-auto text-[var(--text-muted)] mb-3" />
-                <p className="text-sm font-bold text-[var(--text-secondary)]">Kuch nahi mila &ldquo;{query}&rdquo; ke liye</p>
-                <p className="text-xs text-[var(--text-muted)] mt-1">Try a different search term</p>
+                <p className="text-sm font-bold text-[var(--text-secondary)]">{copy.search.noResults} &ldquo;{query}&rdquo;</p>
+                <p className="text-xs text-[var(--text-muted)] mt-1">{copy.feed.noResults}</p>
               </div>
             ) : (
               <>
@@ -130,7 +132,7 @@ export default function SearchPage() {
                   <div className="space-y-2">
                     {activeTab === 'all' && (
                       <h3 className="text-xs font-bold text-[var(--text-secondary)] flex items-center gap-1.5 uppercase tracking-widest">
-                        <MessageSquare size={12} /> Cases
+                        <MessageSquare size={12} /> {copy.feed.cases}
                       </h3>
                     )}
                     {results.cases.map((c, i) => (
@@ -161,7 +163,7 @@ export default function SearchPage() {
                   <div className="space-y-2">
                     {activeTab === 'all' && (
                       <h3 className="text-xs font-bold text-[var(--text-secondary)] flex items-center gap-1.5 uppercase tracking-widest mt-4">
-                        <User size={12} /> Users
+                        <User size={12} /> {copy.nav.profile}s
                       </h3>
                     )}
                     {results.users.map((u, i) => (
@@ -196,15 +198,15 @@ export default function SearchPage() {
           <div className="space-y-4 animate-slide-up">
             <div className="text-center pt-4">
               <SearchIcon size={36} className="mx-auto text-[var(--text-muted)] mb-2" />
-              <p className="text-sm text-[var(--text-secondary)] font-bold">Cases ya users search karo</p>
-              <p className="text-xs text-[var(--text-muted)] mt-1">Case titles, categories, cities, usernames</p>
+              <p className="text-sm text-[var(--text-secondary)] font-bold">{copy.search.searchCases}</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">{copy.search.placeholder}</p>
             </div>
 
             {/* Embedded Leaderboard */}
             <div className="mt-6 space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-black flex items-center gap-1.5 text-[var(--text-primary)]">
-                  <Trophy size={16} className="text-yellow-500" /> Top Judges
+                  <Trophy size={16} className="text-yellow-500" /> {copy.search.topJudges}
                 </h3>
                 <Link
                   href="/leaderboard"

@@ -13,12 +13,21 @@ export function AuthProvider({ children }) {
 
   // Check for existing session on mount
   useEffect(() => {
+    // 1. Initial language check (smooth load)
+    const savedLang = localStorage.getItem('av_lang');
+    if (savedLang) {
+      setCopy(getCopy(savedLang));
+    }
+
+    // 2. Auth check
     const token = localStorage.getItem('av_token');
     if (token) {
       api.get('/api/auth/me')
         .then((userData) => {
           setUser(userData);
-          setCopy(getCopy(userData.languagePreference || LANGUAGES.HINGLISH));
+          const lang = userData.languagePreference || savedLang || LANGUAGES.HINGLISH;
+          setCopy(getCopy(lang));
+          if (userData.languagePreference) localStorage.setItem('av_lang', lang);
         })
         .catch(() => {
           localStorage.removeItem('av_token');
@@ -55,6 +64,7 @@ export function AuthProvider({ children }) {
   const changeLanguage = useCallback(async (lang) => {
     if (!Object.values(LANGUAGES).includes(lang)) return;
     setCopy(getCopy(lang));
+    localStorage.setItem('av_lang', lang); // Smooth persistence
     if (user) {
       try {
         const updatedUser = await api.patch('/api/auth/me', { languagePreference: lang });

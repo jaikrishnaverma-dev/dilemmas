@@ -7,6 +7,7 @@ import VerdictSplitBar from '@/shared/components/VerdictSplitBar';
 import TimeLeftBadge from '@/shared/components/TimeLeftBadge';
 import ShareButton from '@/shared/components/ShareButton';
 import InlineVerdictPanel from '@/modules/feed/InlineVerdictPanel';
+import { useAuth } from '@/modules/auth/AuthContext';
 import { formatCount } from '@/shared/utils/formatPercent';
 import { timeAgo } from '@/shared/utils/timeAgo';
 
@@ -35,6 +36,7 @@ const CATEGORY_COLORS = {
  */
 export default function CaseCard({ caseData, index = 0, isExpanded, onToggleExpand }) {
   const router = useRouter();
+  const { copy } = useAuth();
   const clickTimer = useRef(null);
   const { title, context, category, city, shareSlug, voteCount, voteSplit, expiresAt, createdAt } = caseData;
 
@@ -74,11 +76,11 @@ export default function CaseCard({ caseData, index = 0, isExpanded, onToggleExpa
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${CATEGORY_COLORS[category] || CATEGORY_COLORS.other}`}>
-            {category}
+            {copy.categories[category] || category}
           </span>
           {isHot && (
             <span className="flex items-center gap-1 text-xs font-bold text-[var(--accent-orange)] pulse-live">
-              <Flame size={12} /> HOT
+              <Flame size={12} /> {copy.feed.hot}
             </span>
           )}
         </div>
@@ -102,7 +104,7 @@ export default function CaseCard({ caseData, index = 0, isExpanded, onToggleExpa
       <div className="flex items-center justify-between pt-1">
         <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
           <span className="flex items-center gap-1 font-semibold text-[var(--text-secondary)]">
-            <MessageSquare size={12} /> {formatCount(voteCount)} votes
+            <MessageSquare size={12} /> {formatCount(voteCount)} {copy.feed.votes}
           </span>
           {city && (
             <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--bg-elevated)] text-[var(--text-secondary)]">
@@ -134,7 +136,7 @@ export default function CaseCard({ caseData, index = 0, isExpanded, onToggleExpa
       {/* Double-click hint */}
       {isExpanded && (
         <p className="text-center text-[10px] text-[var(--text-muted)] font-medium pt-1">
-          Double-tap for full case page →
+          {copy.feed.doubleTapHint} \u2192
         </p>
       )}
     </div>

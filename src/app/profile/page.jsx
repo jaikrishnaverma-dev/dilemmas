@@ -42,7 +42,7 @@ export default function ProfilePage() {
             </div>
             <h2 className="text-xl font-extrabold">{copy.auth.signupTitle}</h2>
             <p className="text-sm text-[var(--text-secondary)]">
-              Account banao, Judge Score build karo, aur apni identity lock karo.
+              {copy.auth.lockIdentityHint}
             </p>
           </div>
 
@@ -108,17 +108,17 @@ export default function ProfilePage() {
           <div className="glass-card p-6 space-y-6 animate-slide-up" style={{ animationDelay: '100ms' }}>
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-[var(--text-secondary)] flex items-center gap-2">
-                <BarChart2 size={16} /> JUDGE ANALYTICS
+                <BarChart2 size={16} /> {copy.leaderboard.analyticsTitle}
               </h3>
               <span className="text-xs font-bold text-[var(--accent-orange)] bg-[var(--accent-orange)]/10 px-2 py-0.5 rounded-full">
-                Rank #{scoreData.rank || 'N/A'}
+                {copy.leaderboard.rank} #{scoreData.rank || 'N/A'}
               </span>
             </div>
 
             {/* Score display */}
             <div className="text-center py-2">
               <p className="text-6xl font-black gradient-text">{scoreData.score.toFixed(1)}</p>
-              <p className="text-xs text-[var(--text-muted)] mt-1 font-bold tracking-widest uppercase">Fairness Quotient</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1 font-bold tracking-widest uppercase">{copy.leaderboard.scoreLabel}</p>
             </div>
 
             {/* Stats grid */}
@@ -137,7 +137,7 @@ export default function ProfilePage() {
             {scoreData.nextBadge && (
               <div className="space-y-3">
                 <div className="flex justify-between text-xs font-bold">
-                  <span className="text-[var(--text-secondary)]">NEXT: {getBadgeLabel(scoreData.nextBadge, user.languagePreference).toUpperCase()}</span>
+                  <span className="text-[var(--text-secondary)]">{copy.leaderboard.nextBadge}: {getBadgeLabel(scoreData.nextBadge, user.languagePreference).toUpperCase()}</span>
                   <span className="text-[var(--accent-purple)]">{scoreData.verdictsToNextBadge} {copy.judgeScore.nextBadge}</span>
                 </div>
                 <div className="w-full h-2.5 rounded-full bg-[var(--bg-elevated)] overflow-hidden">
@@ -159,14 +159,14 @@ export default function ProfilePage() {
           {/* Language Selector */}
           <div className="glass-card p-5 space-y-4">
             <h3 className="text-sm font-bold text-[var(--text-secondary)] flex items-center gap-2">
-              <Globe size={16} /> SELECT LANGUAGE
+              <Globe size={16} /> {copy.settings.selectLanguage}
             </h3>
             <div className="grid grid-cols-2 gap-2">
               {[
-                { id: 'english', label: 'English' },
-                { id: 'hinglish', label: 'Hinglish' },
-                { id: 'hindi', label: 'Hindi (हिंदी)' },
-                { id: 'telugu', label: 'Telugu (తెలుగు)' },
+                { id: 'english', label: copy.settings.english },
+                { id: 'hinglish', label: copy.settings.hinglish },
+                { id: 'hindi', label: copy.settings.hindi },
+                { id: 'telugu', label: copy.settings.telugu },
               ].map((lang) => (
                 <button
                   key={lang.id}

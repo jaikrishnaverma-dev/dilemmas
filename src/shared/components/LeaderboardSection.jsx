@@ -4,19 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Trophy, MapPin, Target, Award, Search } from 'lucide-react';
 import JudgeBadgeIcon from '@/shared/components/JudgeBadgeIcon';
+import { useAuth } from '@/modules/auth/AuthContext';
 import { api } from '@/shared/api/apiClient';
-import { COPY } from '@/shared/utils/hinglishCopy';
 
 /**
  * LeaderboardSection — reusable top judges list.
- * Shows the top N judges with ranks, badges, scores.
- * Used in both /search (embedded) and /leaderboard (full page).
- * 
- * Props:
- *   limit: number — how many to show (default 10)
- *   compact: boolean — compact mode for embedding
  */
 export default function LeaderboardSection({ limit = 10, compact = false }) {
+  const { copy } = useAuth();
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -91,7 +86,7 @@ export default function LeaderboardSection({ limit = 10, compact = false }) {
                   <MapPin size={8} /> {entry.city || 'India'}
                 </span>
                 <span className="text-[9px] font-bold text-[var(--text-muted)] uppercase flex items-center gap-0.5">
-                  <Target size={8} /> {entry.totalVerdicts} verdicts
+                  <Target size={8} /> {entry.totalVerdicts} {copy.feed.verdicts || 'verdicts'}
                 </span>
               </div>
             </div>
@@ -99,7 +94,7 @@ export default function LeaderboardSection({ limit = 10, compact = false }) {
             {/* Score */}
             <div className="text-right">
               <p className={`${compact ? 'text-sm' : 'text-lg'} font-black gradient-text`}>{entry.score.toFixed(1)}</p>
-              <p className="text-[7px] font-bold text-[var(--text-muted)] uppercase tracking-tighter">Score</p>
+              <p className="text-[7px] font-bold text-[var(--text-muted)] uppercase tracking-tighter">{copy.leaderboard.scoreLabel || 'Score'}</p>
             </div>
           </Link>
         );

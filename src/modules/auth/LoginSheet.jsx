@@ -3,13 +3,12 @@
 import { useState } from 'react';
 import { User, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '@/modules/auth/AuthContext';
-import { COPY } from '@/shared/utils/hinglishCopy';
 
 /**
  * Login bottom sheet component.
  */
 export default function LoginSheet({ onSuccess, onSwitch }) {
-  const { login } = useAuth();
+  const { login, copy } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +35,7 @@ export default function LoginSheet({ onSuccess, onSwitch }) {
         <div className="p-2 rounded-lg bg-[var(--accent-orange)]/10 text-[var(--accent-orange)]">
           <LogIn size={20} />
         </div>
-        <h3 className="text-xl font-black">{COPY.auth.loginTitle}</h3>
+        <h3 className="text-xl font-black">{copy.auth.loginTitle}</h3>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -49,7 +48,7 @@ export default function LoginSheet({ onSuccess, onSwitch }) {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder={COPY.auth.username}
+            placeholder={copy.auth.username}
             className="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-xl pl-12 pr-4 py-4
               text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
               focus:outline-none focus:border-[var(--accent-orange)] transition-all"
@@ -65,7 +64,7 @@ export default function LoginSheet({ onSuccess, onSwitch }) {
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder={COPY.auth.password}
+            placeholder={copy.auth.password}
             className="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-xl pl-12 pr-12 py-4
               text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
               focus:outline-none focus:border-[var(--accent-orange)] transition-all"
@@ -91,14 +90,14 @@ export default function LoginSheet({ onSuccess, onSwitch }) {
           {loading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
-            <><LogIn size={18} /> {COPY.buttons.login}</>
+            <><LogIn size={18} /> {copy.buttons.login}</>
           )}
         </button>
       </form>
 
       <p className="text-center text-xs text-[var(--text-muted)] font-medium">
-        {COPY.auth.noAccount}{' '}
-        <button onClick={onSwitch} className="text-[var(--accent-purple)] font-bold hover:underline">{COPY.buttons.signup}</button>
+        {copy.auth.noAccount}{' '}
+        <button onClick={onSwitch} className="text-[var(--accent-purple)] font-bold hover:underline">{copy.buttons.signup}</button>
       </p>
     </div>
   );

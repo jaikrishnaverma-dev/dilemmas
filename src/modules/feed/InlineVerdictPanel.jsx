@@ -7,13 +7,13 @@ import MentionText from '@/shared/components/MentionText';
 import MentionInput from '@/shared/components/MentionInput';
 import { useAuth } from '@/modules/auth/AuthContext';
 import { api } from '@/shared/api/apiClient';
-import { COPY, getSideLabel } from '@/shared/utils/hinglishCopy';
+import { getSideLabel } from '@/shared/utils/i18n';
 import { timeAgo } from '@/shared/utils/timeAgo';
 
 const SIDE_OPTIONS = [
-  { value: 'teri_galti',      icon: ArrowRight, label: 'Teri Galti',         color: 'border-[var(--accent-orange)] bg-[var(--accent-orange)]/10 text-[var(--accent-orange)]' },
-  { value: 'uski_galti',      icon: ArrowLeft,  label: 'Uski Galti',         color: 'border-[var(--accent-purple)] bg-[var(--accent-purple)]/10 text-[var(--accent-purple)]' },
-  { value: 'situation_galat', icon: BarChart3,   label: 'Situation Hi Galat', color: 'border-[var(--accent-cyan)] bg-[var(--accent-cyan)]/10 text-[var(--accent-cyan)]' },
+  { value: 'teri_galti',      icon: ArrowRight, color: 'border-[var(--accent-orange)] bg-[var(--accent-orange)]/10 text-[var(--accent-orange)]' },
+  { value: 'uski_galti',      icon: ArrowLeft,  color: 'border-[var(--accent-purple)] bg-[var(--accent-purple)]/10 text-[var(--accent-purple)]' },
+  { value: 'situation_galat', icon: BarChart3,   color: 'border-[var(--accent-cyan)] bg-[var(--accent-cyan)]/10 text-[var(--accent-cyan)]' },
 ];
 
 const SIDE_COLORS = {
@@ -27,7 +27,7 @@ const SIDE_COLORS = {
  * Shows quick vote + recent comments. Minimal version of the full case page.
  */
 export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, copy, languagePreference } = useAuth();
   const [selectedSide, setSelectedSide] = useState('');
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -45,9 +45,9 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
   }, [caseData.shareSlug]);
 
   const handleVote = async () => {
-    if (!isLoggedIn) { setError('Pehle login karo!'); return; }
-    if (!selectedSide) { setError('Side chuno!'); return; }
-    if (reason.trim().length < 3) { setError('Reason do (min 3 chars)'); return; }
+    if (!isLoggedIn) { setError(copy.auth.loginRequired); return; }
+    if (!selectedSide) { setError(copy.verdict.pickSide); return; }
+    if (reason.trim().length < 3) { setError(copy.submission.minChars); return; }
 
     setSubmitting(true);
     setError('');
@@ -75,7 +75,7 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
       {/* Quick vote (if not voted) */}
       {!hasVoted && (
         <div className="space-y-2">
-          <p className="text-xs font-bold text-[var(--text-secondary)]">Quick Verdict</p>
+          <p className="text-xs font-bold text-[var(--text-secondary)]">{copy.verdict.quickVerdict}</p>
           <div className="flex gap-1.5">
             {SIDE_OPTIONS.map(opt => {
               const Icon = opt.icon;
@@ -88,7 +88,7 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
                       ? opt.color + ' border-current scale-[1.02]'
                       : 'border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)]'}`}
                 >
-                  <Icon size={12} />{getSideLabel(opt.value).split(' ')[0]}
+                  <Icon size={12} />{getSideLabel(opt.value, languagePreference).split(' ')[0]}
                 </button>
               );
             })}
@@ -98,7 +98,7 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
               <MentionInput
                 value={reason}
                 onChange={setReason}
-                placeholder="Ek line mein batao — kyu? Use @ to tag"
+                placeholder={copy.verdict.reasonHint}
                 maxLength={280}
                 className="text-xs rounded-lg px-3 py-2"
               />
@@ -119,14 +119,14 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
 
       {hasVoted && (
         <div className="text-center py-2">
-          <p className="text-xs font-bold text-[var(--accent-cyan)]">Verdict done! See full results →</p>
+          <p className="text-xs font-bold text-[var(--accent-cyan)]">{copy.verdict.verdictDone} \u2192</p>
         </div>
       )}
 
       {/* Recent verdicts */}
       <div className="space-y-1.5">
         <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-1">
-          <MessageSquare size={10} /> Recent Verdicts
+          <MessageSquare size={10} /> {copy.verdict.recentVerdicts}
         </p>
 
         {verdictsLoading ? (
@@ -139,7 +139,7 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
             ))}
           </div>
         ) : verdicts.length === 0 ? (
-          <p className="text-xs text-[var(--text-muted)] py-2">Koi verdict nahi abhi — pehle tu de!</p>
+          <p className="text-xs text-[var(--text-muted)] py-2">{copy.verdict.noVerdicts}</p>
         ) : (
           verdicts.map(v => (
             <div key={v.id} className="flex gap-2 items-start py-1.5">
@@ -152,7 +152,7 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
                 <div className="flex items-center gap-1.5">
                   <Link href={`/user/${v.user.username}`} onClick={(e) => e.stopPropagation()}
                     className="text-[10px] font-bold hover:text-[var(--accent-purple)] transition-colors">@{v.user.username}</Link>
-                  <span className={`text-[9px] font-bold ${SIDE_COLORS[v.side]}`}>{getSideLabel(v.side)}</span>
+                  <span className={`text-[9px] font-bold ${SIDE_COLORS[v.side]}`}>{getSideLabel(v.side, languagePreference)}</span>
                   <span className="text-[9px] text-[var(--text-muted)]">{timeAgo(v.createdAt)}</span>
                 </div>
                 <div className="text-[11px] text-[var(--text-secondary)] leading-snug mt-0.5">

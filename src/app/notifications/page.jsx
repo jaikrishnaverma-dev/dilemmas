@@ -19,7 +19,7 @@ const TYPE_CONFIG = {
 
 export default function NotificationsPage() {
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, copy } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ export default function NotificationsPage() {
     <div className="min-h-dvh bg-[var(--bg-primary)]"><TopBar />
       <main className="max-w-lg mx-auto px-4 pt-20 text-center">
         <BellOff size={48} className="mx-auto text-[var(--text-muted)] mb-3" />
-        <p className="text-sm text-[var(--text-secondary)] font-bold">Login karo notifications dekhne ke liye</p>
+        <p className="text-sm text-[var(--text-secondary)] font-bold">{copy.auth.loginRequired}</p>
       </main><BottomNav /></div>
   );
 
@@ -68,14 +68,14 @@ export default function NotificationsPage() {
         {/* Header */}
         <div className="flex items-center justify-between animate-slide-up">
           <h2 className="text-xl font-black flex items-center gap-2">
-            <Bell size={20} /> Notifications
+            <Bell size={20} /> {copy.notifications.title}
             {unreadCount > 0 && (
               <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[var(--accent-pink)] text-white">{unreadCount}</span>
             )}
           </h2>
           {unreadCount > 0 && (
             <button onClick={markAllRead} className="flex items-center gap-1 text-xs font-bold text-[var(--accent-purple)] hover:underline">
-              <CheckCheck size={14} /> Mark all read
+              <CheckCheck size={14} /> {copy.notifications.markAllRead}
             </button>
           )}
         </div>
@@ -93,8 +93,8 @@ export default function NotificationsPage() {
         ) : notifications.length === 0 ? (
           <div className="glass-card p-10 text-center animate-slide-up">
             <Bell size={40} className="mx-auto text-[var(--text-muted)] mb-3" />
-            <p className="text-sm text-[var(--text-secondary)] font-bold">Koi notification nahi hai</p>
-            <p className="text-xs text-[var(--text-muted)] mt-1">Jab koi tumhare case pe vote karega, yahan dikhega</p>
+            <p className="text-sm text-[var(--text-secondary)] font-bold">{copy.notifications.noNotifications}</p>
+            <p className="text-xs text-[var(--text-muted)] mt-1">{copy.notifications.noNotificationsHint}</p>
           </div>
         ) : (
           <div className="space-y-2">

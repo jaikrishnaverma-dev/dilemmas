@@ -7,18 +7,18 @@ import { Flame, PenSquare, Search, Bell, User } from 'lucide-react';
 import { useAuth } from '@/modules/auth/AuthContext';
 import { api } from '@/shared/api/apiClient';
 
-const NAV_ITEMS = [
-  { href: '/',              icon: Flame,     label: 'Feed',    id: 'nav-feed' },
-  { href: '/search',        icon: Search,    label: 'Search',  id: 'nav-search' },
-  { href: '/submit',        icon: PenSquare, label: 'Post',    id: 'nav-submit' },
-  { href: '/notifications', icon: Bell,      label: 'Alerts',  id: 'nav-notifs', showBadge: true },
-  { href: '/profile',       icon: User,      label: 'Profile', id: 'nav-profile' },
-];
-
 export default function BottomNav() {
   const pathname = usePathname();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, copy } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const NAV_ITEMS = [
+    { href: '/',              icon: Flame,     label: copy.nav.feed,    id: 'nav-feed' },
+    { href: '/search',        icon: Search,    label: copy.nav.search,  id: 'nav-search' },
+    { href: '/submit',        icon: PenSquare, label: copy.nav.post,    id: 'nav-submit' },
+    { href: '/notifications', icon: Bell,      label: copy.nav.alerts,  id: 'nav-notifs', showBadge: true },
+    { href: '/profile',       icon: User,      label: copy.nav.profile, id: 'nav-profile' },
+  ];
 
   // Poll unread notifications count
   useEffect(() => {

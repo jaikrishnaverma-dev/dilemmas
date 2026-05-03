@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { User, Lock, Eye, EyeOff, MapPin, UserPlus, UserCircle, Calendar } from 'lucide-react';
 import { useAuth } from '@/modules/auth/AuthContext';
-import { COPY } from '@/shared/utils/hinglishCopy';
 
 const CITIES = ['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Jaipur', 'Lucknow', 'Ahmedabad', 'Chandigarh', 'Indore', 'Bhopal', 'Noida', 'Gurgaon', 'Other'];
 
@@ -11,7 +10,7 @@ const CITIES = ['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata
  * Signup sheet component with city selection.
  */
 export default function SignupSheet({ onSuccess, onSwitch }) {
-  const { signup } = useAuth();
+  const { signup, copy } = useAuth();
   const [form, setForm] = useState({ username: '', password: '', city: '', gender: 'prefer_not_to_say', ageBracket: '18-24' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -39,7 +38,7 @@ export default function SignupSheet({ onSuccess, onSwitch }) {
         <div className="p-2 rounded-lg bg-[var(--accent-purple)]/10 text-[var(--accent-purple)]">
           <UserPlus size={20} />
         </div>
-        <h3 className="text-xl font-black">{COPY.auth.signupTitle}</h3>
+        <h3 className="text-xl font-black">{copy.auth.signupTitle}</h3>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -95,7 +94,7 @@ export default function SignupSheet({ onSuccess, onSwitch }) {
               text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-purple)] transition-all
               appearance-none"
           >
-            <option value="">City chuno</option>
+            <option value="">{copy.auth.cityPlaceholder}</option>
             {CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
@@ -103,13 +102,13 @@ export default function SignupSheet({ onSuccess, onSwitch }) {
         {/* Gender Selection */}
         <div className="space-y-2">
           <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-1.5">
-            <UserCircle size={12} /> Gender
+            <UserCircle size={12} /> {copy.auth.gender}
           </p>
           <div className="flex gap-2">
             {[
-              { id: 'male', label: 'Male' },
-              { id: 'female', label: 'Female' },
-              { id: 'other', label: 'Other' }
+              { id: 'male', label: copy.auth.male },
+              { id: 'female', label: copy.auth.female },
+              { id: 'other', label: copy.auth.other }
             ].map((g) => (
               <button
                 key={g.id}
@@ -129,7 +128,7 @@ export default function SignupSheet({ onSuccess, onSwitch }) {
         {/* Age Selection */}
         <div className="space-y-2">
           <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-1.5">
-            <Calendar size={12} /> Age Bracket
+            <Calendar size={12} /> {copy.auth.ageBracket}
           </p>
           <div className="flex gap-2">
             {['13-17', '18-24', '25-34', '35+'].map((age) => (
@@ -160,14 +159,14 @@ export default function SignupSheet({ onSuccess, onSwitch }) {
           {loading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
-            <><UserPlus size={18} /> {COPY.buttons.signup}</>
+            <><UserPlus size={18} /> {copy.buttons.signup}</>
           )}
         </button>
       </form>
 
       <p className="text-center text-xs text-[var(--text-muted)] font-medium">
-        {COPY.auth.hasAccount}{' '}
-        <button onClick={onSwitch} className="text-[var(--accent-purple)] font-bold hover:underline">{COPY.buttons.login}</button>
+        {copy.auth.hasAccount}{' '}
+        <button onClick={onSwitch} className="text-[var(--accent-purple)] font-bold hover:underline">{copy.buttons.login}</button>
       </p>
     </div>
   );

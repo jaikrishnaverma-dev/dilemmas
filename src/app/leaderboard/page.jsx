@@ -6,9 +6,10 @@ import TopBar from '@/shared/components/TopBar';
 import BottomNav from '@/shared/components/BottomNav';
 import JudgeBadgeIcon from '@/shared/components/JudgeBadgeIcon';
 import { api } from '@/shared/api/apiClient';
-import { COPY } from '@/shared/utils/hinglishCopy';
+import { useAuth } from '@/modules/auth/AuthContext';
 
 export default function LeaderboardPage() {
+  const { copy } = useAuth();
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cityFilter, setCityFilter] = useState('');
@@ -30,9 +31,9 @@ export default function LeaderboardPage() {
 
         <div className="text-center animate-slide-up space-y-1">
           <h2 className="text-2xl font-black flex items-center justify-center gap-2">
-            <Trophy className="text-yellow-500" size={24} /> {COPY.judgeScore.leaderboard}
+            <Trophy className="text-yellow-500" size={24} /> {copy.judgeScore.leaderboard}
           </h2>
-          <p className="text-xs text-[var(--text-secondary)] font-bold tracking-widest uppercase">India&apos;s Most Fair Judges</p>
+          <p className="text-xs text-[var(--text-secondary)] font-bold tracking-widest uppercase">{copy.leaderboard.subtitle}</p>
         </div>
 
         {/* Search/Filter */}
@@ -44,7 +45,7 @@ export default function LeaderboardPage() {
             type="text"
             value={cityFilter}
             onChange={(e) => setCityFilter(e.target.value)}
-            placeholder="Search by city (e.g. Delhi, Mumbai)"
+            placeholder={copy.leaderboard.searchPlaceholder}
             className="w-full bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-2xl pl-12 pr-4 py-4
               text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)]
               focus:outline-none focus:border-[var(--accent-purple)] transition-all shadow-lg shadow-black/20"
@@ -108,7 +109,7 @@ export default function LeaderboardPage() {
                         <MapPin size={8} /> {entry.city || 'India'}
                       </span>
                       <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase flex items-center gap-0.5">
-                        <Target size={8} /> {entry.totalVerdicts} verdicts
+                        <Target size={8} /> {entry.totalVerdicts} {copy.feed.verdicts}
                       </span>
                     </div>
                   </div>
@@ -116,7 +117,7 @@ export default function LeaderboardPage() {
                   {/* Score */}
                   <div className="text-right">
                     <p className="text-lg font-black gradient-text">{entry.score.toFixed(1)}</p>
-                    <p className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-tighter">Fairness Score</p>
+                    <p className="text-[8px] font-bold text-[var(--text-muted)] uppercase tracking-tighter">{copy.leaderboard.scoreLabel}</p>
                   </div>
                 </div>
               );
@@ -125,7 +126,7 @@ export default function LeaderboardPage() {
             {leaderboard.length === 0 && (
               <div className="glass-card p-10 text-center space-y-3">
                 <Search className="mx-auto text-[var(--text-muted)]" size={40} />
-                <p className="text-[var(--text-secondary)] font-bold">No judges found in this city</p>
+                <p className="text-[var(--text-secondary)] font-bold">{copy.leaderboard.noJudges}</p>
               </div>
             )}
           </div>

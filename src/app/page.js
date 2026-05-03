@@ -8,9 +8,10 @@ import CaseCard from '@/modules/feed/CaseCard';
 import FeedFilters from '@/modules/feed/FeedFilters';
 import { FeedSkeleton } from '@/shared/components/LoadingPulse';
 import { api } from '@/shared/api/apiClient';
-import { COPY } from '@/shared/utils/hinglishCopy';
+import { useAuth } from '@/modules/auth/AuthContext';
 
 export default function FeedPage() {
+  const { copy } = useAuth();
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -145,7 +146,7 @@ export default function FeedPage() {
 
         {/* Tagline */}
         <p className="text-center text-sm text-[var(--text-secondary)] font-medium">
-          {COPY.general.tagline}
+          {copy.general.tagline}
         </p>
 
         {/* Filters */}
@@ -161,8 +162,8 @@ export default function FeedPage() {
           <FeedSkeleton />
         ) : cases.length === 0 ? (
           <div className="glass-card p-10 text-center">
-            <p className="text-sm text-[var(--text-secondary)] font-bold">Koi case nahi mila</p>
-            <p className="text-xs text-[var(--text-muted)] mt-1">Try a different filter</p>
+            <p className="text-sm text-[var(--text-secondary)] font-bold">{copy.feed.noResults}</p>
+            <p className="text-xs text-[var(--text-muted)] mt-1">{copy.search.noResults}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -190,7 +191,7 @@ export default function FeedPage() {
 
         {!hasMore && cases.length > 0 && (
           <p className="text-center text-xs text-[var(--text-muted)] py-4 font-medium">
-            Bas itne hi cases hain abhi 🤷‍♂️
+            {copy.feed.endOfFeed} 🤷‍♂️
           </p>
         )}
       </main>
@@ -205,7 +206,7 @@ export default function FeedPage() {
             hover:shadow-2xl hover:shadow-[var(--accent-pink)]/40"
         >
           <ArrowUp size={14} />
-          {newCaseCount} new {newCaseCount === 1 ? 'case' : 'cases'}
+          {newCaseCount} {newCaseCount === 1 ? copy.feed.case : copy.feed.cases}
         </button>
       )}
 

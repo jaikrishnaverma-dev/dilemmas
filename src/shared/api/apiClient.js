@@ -35,8 +35,9 @@ async function apiRequest(endpoint, options = {}) {
 }
 
 export const api = {
-  get:  (endpoint) => apiRequest(endpoint, { method: 'GET' }),
-  post: (endpoint, body) => apiRequest(endpoint, { method: 'POST', body: JSON.stringify(body) }),
-  put:  (endpoint, body) => apiRequest(endpoint, { method: 'PUT', body: JSON.stringify(body) }),
-  del:  (endpoint) => apiRequest(endpoint, { method: 'DELETE' }),
+  get:   (endpoint) => apiRequest(endpoint, { method: 'GET' }),
+  post:  (endpoint, body) => apiRequest(endpoint, { method: 'POST', body: JSON.stringify(body) }),
+  put:   (endpoint, body) => apiRequest(endpoint, { method: 'PUT', body: JSON.stringify(body) }),
+  patch: (endpoint, body) => apiRequest(endpoint, { method: 'PATCH', body: JSON.stringify(body) }),
+  del:   (endpoint) => apiRequest(endpoint, { method: 'DELETE' }),
 };

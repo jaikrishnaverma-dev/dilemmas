@@ -17,7 +17,7 @@ import MentionText from '@/shared/components/MentionText';
 import MentionInput from '@/shared/components/MentionInput';
 import { useAuth } from '@/modules/auth/AuthContext';
 import { api } from '@/shared/api/apiClient';
-import { COPY, getSideLabel } from '@/shared/utils/hinglishCopy';
+import { getSideLabel } from '@/shared/utils/i18n';
 import { isExpired, timeAgo } from '@/shared/utils/timeAgo';
 
 const SIDE_OPTIONS = [
@@ -43,7 +43,7 @@ export default function CaseVerdictPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const highlightId = searchParams.get('highlight');
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, copy, languagePreference } = useAuth();
   const [caseData, setCaseData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedSide, setSelectedSide] = useState('');
@@ -116,11 +116,11 @@ export default function CaseVerdictPage() {
 
   const handleVote = async () => {
     if (!isLoggedIn) {
-      setError('Pehle login karo vote karne ke liye!');
+      setError(copy.auth.loginRequired);
       return;
     }
-    if (!selectedSide) { setError('Side chuno pehle!'); return; }
-    if (reason.trim().length < 3) { setError(COPY.verdict.reasonRequired); return; }
+    if (!selectedSide) { setError(copy.verdict.pickSide); return; }
+    if (reason.trim().length < 3) { setError(copy.verdict.reasonRequired); return; }
 
     setSubmitting(true);
     setError('');
@@ -144,7 +144,7 @@ export default function CaseVerdictPage() {
         const share = await api.post('/api/share/generate', { verdictId: data.verdictId });
         setShareData({
           caseTitle: caseData.title,
-          side: getSideLabel(selectedSide),
+          side: getSideLabel(selectedSide, languagePreference),
           agreePercent: share.cardData.agreePercent,
           fullUrl: share.fullUrl,
           caseSlug: slug,
@@ -170,7 +170,7 @@ export default function CaseVerdictPage() {
     <div className="min-h-dvh bg-[var(--bg-primary)]">
       <TopBar />
       <main className="max-w-lg mx-auto px-4 pt-20 text-center">
-        <p className="text-[var(--text-secondary)]">Case nahi mila</p>
+        <p className="text-[var(--text-secondary)]">{copy.search.noResults}</p>
       </main>
       <BottomNav />
     </div>
@@ -207,7 +207,7 @@ export default function CaseVerdictPage() {
 
           <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
             <span className="flex items-center gap-1 font-semibold text-[var(--text-secondary)]">
-              <MessageSquare size={12} /> {caseData.voteCount} votes
+              <MessageSquare size={12} /> {caseData.voteCount} {copy.feed.votes}
             </span>
             {caseData.city && (
               <span className="flex items-center gap-1">
@@ -220,7 +220,7 @@ export default function CaseVerdictPage() {
         {/* Voting panel (if not voted and not expired) */}
         {!hasVoted && !expired && (
           <div className="glass-card p-5 space-y-4 animate-slide-up" style={{ animationDelay: '100ms' }}>
-            <h3 className="text-base font-bold">{COPY.verdict.pickSide}</h3>
+            <h3 className="text-base font-bold">{copy.verdict.pickSide}</h3>
 
             <div className="grid grid-cols-1 gap-2">
               {SIDE_OPTIONS.map((opt) => {
@@ -235,7 +235,7 @@ export default function CaseVerdictPage() {
                         : 'border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--text-muted)]'}`}
                   >
                     <Icon size={18} />
-                    <span className="font-bold text-sm">{getSideLabel(opt.value)}</span>
+                    <span className="font-bold text-sm">{getSideLabel(opt.value, languagePreference)}</span>
                   </button>
                 );
               })}
@@ -245,7 +245,7 @@ export default function CaseVerdictPage() {
               <MentionInput
                 value={reason}
                 onChange={setReason}
-                placeholder={COPY.verdict.reasonHint}
+                placeholder={copy.verdict.reasonHint}
                 maxLength={280}
                 multiline={true}
                 rows={3}
@@ -266,7 +266,7 @@ export default function CaseVerdictPage() {
               {submitting ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                <><Send size={16} /> {COPY.buttons.vote}</>
+                <><Send size={16} /> {copy.buttons.vote}</>
               )}
             </button>
           </div>
@@ -293,7 +293,7 @@ export default function CaseVerdictPage() {
                     <div className="flex gap-2">
                       {city.splits.map((s) => (
                         <span key={s.side} className={`font-semibold ${SIDE_COLORS[s.side] || 'text-[var(--text-muted)]'}`}>
-                          {getSideLabel(s.side)}: {Math.round((s.count / city.total) * 100)}%
+                          {getSideLabel(s.side, languagePreference)}: {Math.round((s.count / city.total) * 100)}%
                         </span>
                       ))}
                     </div>
@@ -307,9 +307,9 @@ export default function CaseVerdictPage() {
               <div className="space-y-3 pt-2">
                 <div className="glass-card p-4 text-center">
                   <p className="text-sm font-bold text-[var(--text-primary)]">
-                    {COPY.share.cardTitle} <span className="gradient-text">{shareData.side}</span>
+                    {copy.share.cardTitle} <span className="gradient-text">{shareData.side}</span>
                   </p>
-                  <p className="text-2xl font-black gradient-text mt-1">{shareData.agreePercent}% {COPY.share.agreesWith}</p>
+                  <p className="text-2xl font-black gradient-text mt-1">{shareData.agreePercent}% {copy.share.agreesWith}</p>
                 </div>
                 <ShareButton shareData={shareData} />
               </div>
@@ -326,7 +326,7 @@ export default function CaseVerdictPage() {
           >
             <span className="flex items-center gap-2">
               <Users size={16} className="text-[var(--accent-purple)]" />
-              Verdicts & Comments ({caseData.voteCount})
+              {copy.verdict.verdictsAndComments} ({caseData.voteCount})
             </span>
             <ChevronDown size={16} className={`transition-transform duration-200 ${showVoters ? 'rotate-180' : ''}`} />
           </button>
@@ -342,7 +342,7 @@ export default function CaseVerdictPage() {
                       ? 'bg-[var(--text-primary)] text-[var(--bg-primary)]'
                       : 'bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}`}
                 >
-                  <Filter size={10} /> All
+                  <Filter size={10} /> {copy.categories.all}
                 </button>
                 {SIDE_OPTIONS.map(opt => (
                   <button
@@ -354,7 +354,7 @@ export default function CaseVerdictPage() {
                         : 'bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}`}
                   >
                     <div className={`w-2 h-2 rounded-full ${opt.dotColor}`} />
-                    {getSideLabel(opt.value)}
+                    {getSideLabel(opt.value, languagePreference)}
                   </button>
                 ))}
               </div>
@@ -375,7 +375,7 @@ export default function CaseVerdictPage() {
               ) : verdicts.length === 0 ? (
                 <div className="glass-card p-6 text-center">
                   <MessageSquare size={32} className="mx-auto text-[var(--text-muted)] mb-2" />
-                  <p className="text-sm text-[var(--text-secondary)]">Koi verdict nahi mila</p>
+                  <p className="text-sm text-[var(--text-secondary)]">{copy.verdict.noVerdicts}</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -391,7 +391,7 @@ export default function CaseVerdictPage() {
                       {v.isHighlighted && (
                         <div className="flex items-center gap-1 text-[10px] font-bold text-[var(--accent-purple)] mb-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-purple)] pulse-live" />
-                          Tagged comment
+                          {copy.verdict.taggedComment}
                         </div>
                       )}
                       {/* User row */}
@@ -420,7 +420,7 @@ export default function CaseVerdictPage() {
                         {/* Side badge */}
                         <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${SIDE_COLORS[v.side]}`}>
                           <div className={`w-1.5 h-1.5 rounded-full ${SIDE_DOT_COLORS[v.side]}`} />
-                          {getSideLabel(v.side)}
+                          {getSideLabel(v.side, languagePreference)}
                         </span>
                       </div>
 
@@ -442,7 +442,7 @@ export default function CaseVerdictPage() {
                       {verdictsLoading ? (
                         <div className="w-4 h-4 border-2 border-[var(--accent-purple)] border-t-transparent rounded-full animate-spin" />
                       ) : (
-                        <><ChevronDown size={14} /> Load more verdicts</>
+                        <><ChevronDown size={14} /> {copy.verdict.loadMore}</>
                       )}
                     </button>
                   )}

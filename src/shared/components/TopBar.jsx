@@ -22,7 +22,7 @@ export default function TopBar() {
         </h1>
         <div className="flex items-center gap-1.5">
           <Radio size={10} className="text-green-500 pulse-live" />
-          <span className="text-xs text-[var(--text-secondary)] font-medium">Live</span>
+          <span className="text-xs text-[var(--text-secondary)] font-medium uppercase tracking-widest">{copy.general.live}</span>
         </div>
       </div>
     </header>
