@@ -67,6 +67,7 @@ export async function GET(request, { params }) {
       const u = v.userId ? userMap[v.userId.toString()] : null;
       return {
         id: v._id,
+        type: v.type || 'verdict',
         side: v.side,
         reason: v.reason,
         city: v.city,
@@ -74,10 +75,11 @@ export async function GET(request, { params }) {
         createdAt: v.createdAt,
         isHighlighted: highlight && v._id.toString() === highlight,
         user: u ? {
+          id: u._id,
           username: u.username,
           city: u.city,
           avatarUrl: u.avatarUrl,
-        } : { username: 'Anonymous', city: '', avatarUrl: '' },
+        } : { id: null, username: 'Anonymous', city: '', avatarUrl: '' },
       };
     });
 

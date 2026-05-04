@@ -48,4 +48,4 @@ async function login(request) {
   }
 }
 
-export const POST = withRateLimit(login, 'login', 10, 3600, 'Bohot zyada login attempts! Ek ghante mein sirf 10 baar try kar sakte ho. Thodi der baad aao 🔐');
+export const POST = withRateLimit(login, 'login', 20, 3600, 'Bohot zyada login attempts! Ek ghante mein sirf 20 baar try kar sakte ho. Thodi der baad aao 🔐');

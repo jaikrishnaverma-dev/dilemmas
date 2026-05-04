@@ -69,4 +69,4 @@ async function signup(request) {
   }
 }
 
-export const POST = withRateLimit(signup, 'signup', 5, 3600, 'Ek ghante mein sirf 5 baar signup kar sakte ho. Thodi der baad try karo! ⏳');
+export const POST = withRateLimit(signup, 'signup', 10, 3600, 'Ek ghante mein sirf 10 baar signup kar sakte ho. Thodi der baad try karo! ⏳');

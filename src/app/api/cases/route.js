@@ -61,7 +61,7 @@ async function createCase(request) {
   }
 }
 
-export const POST = withAuth(withRateLimit(createCase, 'case_submit', 5, 3600, 'Ek ghante mein sirf 5 cases submit kar sakte ho. Quality over quantity! ✍️'));
+export const POST = withAuth(withRateLimit(createCase, 'case_submit', 10, 3600, 'Ek ghante mein sirf 10 cases submit kar sakte ho. Quality over quantity! ✍️'));
 
 /** GET /api/cases — Get cases list (for categories page, etc.) */
 export async function GET(request) {

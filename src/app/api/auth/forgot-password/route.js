@@ -39,4 +39,4 @@ async function forgotPassword(request) {
   }
 }
 
-export const POST = withRateLimit(forgotPassword, 'forgot_password', 3, 3600, 'Password reset ke liye ek ghante mein sirf 3 baar request kar sakte ho. Apna email inbox check karo! 📧');
+export const POST = withRateLimit(forgotPassword, 'forgot_password', 6, 3600, 'Password reset ke liye ek ghante mein sirf 6 baar request kar sakte ho. Apna email inbox check karo! 📧');

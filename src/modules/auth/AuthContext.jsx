@@ -9,8 +9,8 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES.HINGLISH);
-  const [copy, setCopy] = useState(getCopy(LANGUAGES.HINGLISH));
+  const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES.ENGLISH);
+  const [copy, setCopy] = useState(getCopy(LANGUAGES.ENGLISH));
 
   // Check for existing session on mount
   useEffect(() => {
@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
       api.get('/api/auth/me')
         .then((userData) => {
           setUser(userData);
-          const lang = userData.languagePreference || savedLang || LANGUAGES.HINGLISH;
+          const lang = userData.languagePreference || savedLang || LANGUAGES.ENGLISH;
           setCurrentLanguage(lang);
           setCopy(getCopy(lang));
           if (userData.languagePreference) localStorage.setItem('av_lang', lang);
@@ -46,7 +46,7 @@ export function AuthProvider({ children }) {
     const data = await api.post('/api/auth/login', { username, password });
     localStorage.setItem('av_token', data.token);
     setUser(data.user);
-    const lang = data.user.languagePreference || LANGUAGES.HINGLISH;
+    const lang = data.user.languagePreference || LANGUAGES.ENGLISH;
     setCurrentLanguage(lang);
     setCopy(getCopy(lang));
     return data;
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
     const data = await api.post('/api/auth/signup', userData);
     localStorage.setItem('av_token', data.token);
     setUser(data.user);
-    const lang = data.user.languagePreference || LANGUAGES.HINGLISH;
+    const lang = data.user.languagePreference || LANGUAGES.ENGLISH;
     setCurrentLanguage(lang);
     setCopy(getCopy(lang));
     return data;
@@ -65,8 +65,8 @@ export function AuthProvider({ children }) {
   const logout = useCallback(() => {
     localStorage.removeItem('av_token');
     setUser(null);
-    setCurrentLanguage(LANGUAGES.HINGLISH);
-    setCopy(getCopy(LANGUAGES.HINGLISH));
+    setCurrentLanguage(LANGUAGES.ENGLISH);
+    setCopy(getCopy(LANGUAGES.ENGLISH));
   }, []);
 
   const changeLanguage = useCallback(async (lang) => {

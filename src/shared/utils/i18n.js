@@ -25,17 +25,17 @@ const TRANSLATIONS = {
  * Get the full copy object based on language.
  * Falls back to Hinglish if language is not found.
  */
-export function getCopy(lang = LANGUAGES.HINGLISH) {
-  return TRANSLATIONS[lang] || TRANSLATIONS[LANGUAGES.HINGLISH];
+export function getCopy(lang = LANGUAGES.ENGLISH) {
+  return TRANSLATIONS[lang] || TRANSLATIONS[LANGUAGES.ENGLISH];
 }
 
 /** Legacy support (exported for components still using old pattern) */
-export const COPY = TRANSLATIONS[LANGUAGES.HINGLISH];
+export const COPY = TRANSLATIONS[LANGUAGES.ENGLISH];
 
 /**
  * Get side label in current language.
  */
-export function getSideLabel(side, lang = LANGUAGES.HINGLISH) {
+export function getSideLabel(side, lang = LANGUAGES.ENGLISH) {
   const currentCopy = getCopy(lang);
   return currentCopy.sides[side] || side;
 }
@@ -43,7 +43,7 @@ export function getSideLabel(side, lang = LANGUAGES.HINGLISH) {
 /**
  * Get badge display name in current language.
  */
-export function getBadgeLabel(badge, lang = LANGUAGES.HINGLISH) {
+export function getBadgeLabel(badge, lang = LANGUAGES.ENGLISH) {
   const currentCopy = getCopy(lang);
   return currentCopy.badges[badge] || currentCopy.badges.none;
 }

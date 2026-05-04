@@ -59,4 +59,4 @@ async function handler(request) {
   }
 }
 
-export const POST = withAuth(withRateLimit(handler, 'rating', 60, 3600));
+export const POST = withAuth(withRateLimit(handler, 'rating', 120, 3600));

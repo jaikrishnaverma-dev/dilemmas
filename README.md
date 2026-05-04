@@ -89,11 +89,11 @@ All write-sensitive endpoints are rate-limited to protect the platform from abus
 
 | Endpoint | Limit | Window | What Happens When Exceeded |
 | :--- | :---: | :---: | :--- |
-| **Signup** (`POST /api/auth/signup`) | 5 | 1 hour | "Ek ghante mein sirf 5 baar signup kar sakte ho. Thodi der baad try karo! ⏳" |
-| **Login** (`POST /api/auth/login`) | 10 | 1 hour | "Bohot zyada login attempts! Ek ghante mein sirf 10 baar try kar sakte ho. Thodi der baad aao 🔐" |
-| **Forgot Password** (`POST /api/auth/forgot-password`) | 3 | 1 hour | "Password reset ke liye ek ghante mein sirf 3 baar request kar sakte ho. Apna email inbox check karo! 📧" |
-| **Submit Case** (`POST /api/cases`) | 5 | 1 hour | "Ek ghante mein sirf 5 cases submit kar sakte ho. Quality over quantity! ✍️" |
-| **Cast Verdict** (`POST /api/verdicts`) | 30 | 1 hour | "Ek ghante mein sirf 30 verdicts de sakte ho. Thodi der baad aur cases judge karo! ⚖️" |
+| **Signup** (`POST /api/auth/signup`) | 10 | 1 hour | "Ek ghante mein sirf 10 baar signup kar sakte ho. Thodi der baad try karo! ⏳" |
+| **Login** (`POST /api/auth/login`) | 20 | 1 hour | "Bohot zyada login attempts! Ek ghante mein sirf 20 baar try kar sakte ho. Thodi der baad aao 🔐" |
+| **Forgot Password** (`POST /api/auth/forgot-password`) | 6 | 1 hour | "Password reset ke liye ek ghante mein sirf 6 baar request kar sakte ho. Apna email inbox check karo! 📧" |
+| **Submit Case** (`POST /api/cases`) | 10 | 1 hour | "Ek ghante mein sirf 10 cases submit kar sakte ho. Quality over quantity! ✍️" |
+| **Cast Verdict** (`POST /api/verdicts`) | 60 | 1 hour | "Ek ghante mein sirf 60 verdicts de sakte ho. Thodi der baad aur cases judge karo! ⚖️" |
 
 **Technical Details:**
 - Rate limits are stored in MongoDB with a TTL (time-to-live) index, so expired records are automatically cleaned up.
