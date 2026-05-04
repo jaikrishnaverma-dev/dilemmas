@@ -15,7 +15,7 @@ async function castVerdict(request) {
     const { caseId, side, reason } = body;
 
     // Validate
-    const validSides = ['teri_galti', 'uski_galti', 'situation_galat'];
+    const validSides = ['teri_galti', 'uski_galti', 'situation_galat', 'creator_note'];
     if (!caseId) return errorResponse('Case ID required', 422);
     if (!side || !validSides.includes(side)) return errorResponse('Valid side chuno', 422);
     if (!reason || reason.trim().length < 3) return errorResponse('Reason dena zaroori hai bhai 🙏', 422);
@@ -32,34 +32,41 @@ async function castVerdict(request) {
       return errorResponse('Case ka time khatam ho gaya ⏰', 400);
     }
 
-    // Check if already voted
+    // Restriction: Creator cannot vote on their own case
+    const isCreator = caseDoc.userId && caseDoc.userId.toString() === user._id.toString();
+    const finalSide = isCreator ? 'creator_note' : side;
+
+    // Check if already voted (including creator notes)
     const existing = await Verdict.findOne({ caseId, userId: user._id });
     if (existing) {
-      return errorResponse('Tu already vote kar chuka hai ✅', 409);
+      return errorResponse('Tu already comment kar chuka hai ✅', 409);
     }
 
     // Create verdict
     const verdict = await Verdict.create({
       caseId,
       userId: user._id,
-      side,
+      side: finalSide,
       reason: reason.trim(),
       city: user.city || '',
       gender: user.gender || '',
     });
 
-    // Increment vote count on case
-    await Case.findByIdAndUpdate(caseId, { $inc: { voteCount: 1 } });
+    // Only increment vote count and judge score if NOT a creator note
+    if (!isCreator) {
+      // Increment vote count on case
+      await Case.findByIdAndUpdate(caseId, { $inc: { voteCount: 1 } });
 
-    // Update judge score
-    await JudgeScore.findOneAndUpdate(
-      { userId: user._id },
-      {
-        $inc: { totalVerdicts: 1 },
-        $setOnInsert: { city: user.city || '', currentBadge: 'none', fairRatings: 0, score: 0 },
-      },
-      { upsert: true }
-    );
+      // Update judge score
+      await JudgeScore.findOneAndUpdate(
+        { userId: user._id },
+        {
+          $inc: { totalVerdicts: 1 },
+          $setOnInsert: { city: user.city || '', currentBadge: 'none', fairRatings: 0, score: 0 },
+        },
+        { upsert: true }
+      );
+    }
 
     // Notify case owner (don't notify yourself)
     if (caseDoc.userId && caseDoc.userId.toString() !== user._id.toString()) {
@@ -109,4 +116,4 @@ async function castVerdict(request) {
   }
 }
 
-export const POST = withAuth(withRateLimit(castVerdict, 'vote', 30, 3600));
+export const POST = withAuth(withRateLimit(castVerdict, 'vote', 30, 3600, 'Ek ghante mein sirf 30 verdicts de sakte ho. Thodi der baad aur cases judge karo! ⚖️'));

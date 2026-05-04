@@ -29,6 +29,7 @@ export default function RichTextEditor({
   maxWords = 500,
 }) {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: false,       // No headings — keep it simple

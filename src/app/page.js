@@ -17,7 +17,7 @@ export default function FeedPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [sort, setSort] = useState('trending');
+  const [sort, setSort] = useState('latest');
   const [category, setCategory] = useState('');
 
   // Accordion: which case card is expanded
@@ -45,7 +45,11 @@ export default function FeedPage() {
       const data = await api.get(`/api/feed?${params}`);
 
       if (append) {
-        setCases(prev => [...prev, ...data.cases]);
+        setCases(prev => {
+          const existingIds = new Set(prev.map(c => c.id));
+          const uniqueNew = data.cases.filter(c => !existingIds.has(c.id));
+          return [...prev, ...uniqueNew];
+        });
       } else {
         setCases(data.cases);
         // Track newest case timestamp for polling
@@ -93,7 +97,24 @@ export default function FeedPage() {
     return () => observerRef.current?.disconnect();
   }, [hasMore, loadingMore, page, loadFeed]);
 
-  // ── Poll for new cases every 15s ──
+  // Tracking viewport for smart updates
+  const [isAtTop, setIsAtTop] = useState(true);
+  const topRef = useRef(null);
+
+  // ── Intersection Observer for "At Top" detection ──
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Strict check: only "at top" if the sentinel is fully visible and scroll is near 0
+        setIsAtTop(entry.isIntersecting && window.scrollY < 50);
+      },
+      { threshold: 1.0 }
+    );
+    if (topRef.current) observer.observe(topRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // ── Poll for new cases every 10s ──
   useEffect(() => {
     if (pollInterval.current) clearInterval(pollInterval.current);
 
@@ -101,16 +122,37 @@ export default function FeedPage() {
       if (!newestTimestamp.current) return;
       try {
         const data = await api.get(
-          `/api/feed?since=${encodeURIComponent(newestTimestamp.current)}&countOnly=true`
+          `/api/feed?since=${encodeURIComponent(newestTimestamp.current)}&countOnly=false`
         );
-        if (data.newCount > 0) {
-          setNewCaseCount(data.newCount);
+        
+        if (data.cases?.length > 0) {
+          // If user is at the top and watching 'Latest', auto-insert
+          if (isAtTop && sort === 'latest' && !category) {
+            setCases(prev => {
+              const existingIds = new Set(prev.map(c => c.id));
+              const uniqueNew = data.cases.filter(c => !existingIds.has(c.id));
+              return [...uniqueNew, ...prev];
+            });
+            newestTimestamp.current = data.cases[0].createdAt;
+            setNewCaseCount(0);
+          } else {
+            // Otherwise, show the floating button (deduplicate count)
+            setCases(prev => {
+              const existingIds = new Set(prev.map(c => c.id));
+              const uniqueNew = data.cases.filter(c => !existingIds.has(c.id));
+              if (uniqueNew.length > 0) {
+                setNewCaseCount(curr => curr + uniqueNew.length);
+                newestTimestamp.current = uniqueNew[0].createdAt;
+              }
+              return prev;
+            });
+          }
         }
       } catch {}
-    }, 15000);
+    }, 10000);
 
     return () => clearInterval(pollInterval.current);
-  }, [sort, category]);
+  }, [sort, category, isAtTop]);
 
   // ── Scroll to top & load new cases ──
   const handleNewCasesClick = () => {
@@ -143,6 +185,8 @@ export default function FeedPage() {
     <div className="min-h-dvh bg-[var(--bg-primary)]">
       <TopBar />
       <main className="max-w-lg mx-auto px-4 pt-4 pb-nav space-y-4">
+        {/* Top Sentinel for smart updates */}
+        <div ref={topRef} className="h-1 -mt-4" />
 
         {/* Tagline */}
         <p className="text-center text-sm text-[var(--text-secondary)] font-medium">
@@ -150,12 +194,14 @@ export default function FeedPage() {
         </p>
 
         {/* Filters */}
-        <FeedFilters
-          sort={sort}
-          category={category}
-          onSortChange={handleSortChange}
-          onCategoryChange={handleCategoryChange}
-        />
+        <div>
+          <FeedFilters
+            sort={sort}
+            category={category}
+            onSortChange={handleSortChange}
+            onCategoryChange={handleCategoryChange}
+          />
+        </div>
 
         {/* Feed */}
         {loading ? (

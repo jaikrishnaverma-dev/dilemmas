@@ -9,6 +9,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES.HINGLISH);
   const [copy, setCopy] = useState(getCopy(LANGUAGES.HINGLISH));
 
   // Check for existing session on mount
@@ -16,6 +17,7 @@ export function AuthProvider({ children }) {
     // 1. Initial language check (smooth load)
     const savedLang = localStorage.getItem('av_lang');
     if (savedLang) {
+      setCurrentLanguage(savedLang);
       setCopy(getCopy(savedLang));
     }
 
@@ -26,6 +28,7 @@ export function AuthProvider({ children }) {
         .then((userData) => {
           setUser(userData);
           const lang = userData.languagePreference || savedLang || LANGUAGES.HINGLISH;
+          setCurrentLanguage(lang);
           setCopy(getCopy(lang));
           if (userData.languagePreference) localStorage.setItem('av_lang', lang);
         })
@@ -43,7 +46,9 @@ export function AuthProvider({ children }) {
     const data = await api.post('/api/auth/login', { username, password });
     localStorage.setItem('av_token', data.token);
     setUser(data.user);
-    setCopy(getCopy(data.user.languagePreference || LANGUAGES.HINGLISH));
+    const lang = data.user.languagePreference || LANGUAGES.HINGLISH;
+    setCurrentLanguage(lang);
+    setCopy(getCopy(lang));
     return data;
   }, []);
 
@@ -51,26 +56,34 @@ export function AuthProvider({ children }) {
     const data = await api.post('/api/auth/signup', userData);
     localStorage.setItem('av_token', data.token);
     setUser(data.user);
-    setCopy(getCopy(data.user.languagePreference || LANGUAGES.HINGLISH));
+    const lang = data.user.languagePreference || LANGUAGES.HINGLISH;
+    setCurrentLanguage(lang);
+    setCopy(getCopy(lang));
     return data;
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('av_token');
     setUser(null);
+    setCurrentLanguage(LANGUAGES.HINGLISH);
     setCopy(getCopy(LANGUAGES.HINGLISH));
   }, []);
 
   const changeLanguage = useCallback(async (lang) => {
     if (!Object.values(LANGUAGES).includes(lang)) return;
+    
+    // Optimistic UI update
     setCopy(getCopy(lang));
-    localStorage.setItem('av_lang', lang); // Smooth persistence
+    setCurrentLanguage(lang);
+    localStorage.setItem('av_lang', lang);
+    
     if (user) {
+      setUser(prev => ({ ...prev, languagePreference: lang }));
       try {
-        const updatedUser = await api.patch('/api/auth/me', { languagePreference: lang });
-        setUser(updatedUser);
+        await api.patch('/api/auth/me', { languagePreference: lang });
       } catch (err) {
-        console.error('Failed to update language', err);
+        console.error('Failed to update language on server', err);
+        // Optional: roll back UI if critical, but for lang it's usually fine to keep local
       }
     }
   }, [user]);
@@ -84,6 +97,7 @@ export function AuthProvider({ children }) {
       logout, 
       changeLanguage,
       copy,
+      currentLanguage,
       isLoggedIn: !!user 
     }}>
       {children}

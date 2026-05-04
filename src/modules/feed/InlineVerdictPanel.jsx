@@ -20,6 +20,7 @@ const SIDE_COLORS = {
   teri_galti: 'text-[var(--accent-orange)]',
   uski_galti: 'text-[var(--accent-purple)]',
   situation_galat: 'text-[var(--accent-cyan)]',
+  creator_note: 'text-[var(--accent-purple)] font-black italic',
 };
 
 /**
@@ -27,7 +28,7 @@ const SIDE_COLORS = {
  * Shows quick vote + recent comments. Minimal version of the full case page.
  */
 export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
-  const { isLoggedIn, copy, languagePreference } = useAuth();
+  const { user, isLoggedIn, copy, languagePreference } = useAuth();
   const [selectedSide, setSelectedSide] = useState('');
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -35,6 +36,13 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
   const [error, setError] = useState('');
   const [verdicts, setVerdicts] = useState([]);
   const [verdictsLoading, setVerdictsLoading] = useState(true);
+
+  const isCreator = user && caseData?.userId && (user.id?.toString() === caseData.userId?.toString());
+
+  // Auto-select side for creator
+  useEffect(() => {
+    if (isCreator) setSelectedSide('creator_note');
+  }, [isCreator]);
 
   // Load recent verdicts on mount
   useEffect(() => {
@@ -46,7 +54,7 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
 
   const handleVote = async () => {
     if (!isLoggedIn) { setError(copy.auth.loginRequired); return; }
-    if (!selectedSide) { setError(copy.verdict.pickSide); return; }
+    if (!selectedSide && !isCreator) { setError(copy.verdict.pickSide); return; }
     if (reason.trim().length < 3) { setError(copy.submission.minChars); return; }
 
     setSubmitting(true);
@@ -54,7 +62,7 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
     try {
       await api.post('/api/verdicts', {
         caseId: caseData.id,
-        side: selectedSide,
+        side: isCreator ? 'creator_note' : selectedSide,
         reason: reason.trim(),
       });
       setHasVoted(true);
@@ -75,30 +83,41 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
       {/* Quick vote (if not voted) */}
       {!hasVoted && (
         <div className="space-y-2">
-          <p className="text-xs font-bold text-[var(--text-secondary)]">{copy.verdict.quickVerdict}</p>
-          <div className="flex gap-1.5">
-            {SIDE_OPTIONS.map(opt => {
-              const Icon = opt.icon;
-              return (
-                <button
-                  key={opt.value}
-                  onClick={() => setSelectedSide(opt.value)}
-                  className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg border text-[10px] font-bold transition-all
-                    ${selectedSide === opt.value
-                      ? opt.color + ' border-current scale-[1.02]'
-                      : 'border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)]'}`}
-                >
-                  <Icon size={12} />{getSideLabel(opt.value, languagePreference).split(' ')[0]}
-                </button>
-              );
-            })}
-          </div>
+          {isCreator ? (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border-subtle)]">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[var(--accent-purple)]">
+                Posting as creator ✍️
+              </span>
+            </div>
+          ) : (
+            <>
+              <p className="text-xs font-bold text-[var(--text-secondary)]">{copy.verdict.quickVerdict}</p>
+              <div className="flex gap-1.5">
+                {SIDE_OPTIONS.map(opt => {
+                  const Icon = opt.icon;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => setSelectedSide(opt.value)}
+                      className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-lg border text-[10px] font-bold transition-all
+                        ${selectedSide === opt.value
+                          ? opt.color + ' border-current scale-[1.02]'
+                          : 'border-[var(--border-subtle)] bg-[var(--bg-card)] text-[var(--text-muted)]'}`}
+                    >
+                      <Icon size={12} />{getSideLabel(opt.value, languagePreference).split(' ')[0]}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
           <div className="flex gap-2 items-end">
             <div className="flex-1">
               <MentionInput
                 value={reason}
                 onChange={setReason}
-                placeholder={copy.verdict.reasonHint}
+                placeholder={isCreator ? "Apna point of view daalo..." : copy.verdict.reasonHint}
                 maxLength={280}
                 className="text-xs rounded-lg px-3 py-2"
               />
@@ -119,7 +138,7 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
 
       {hasVoted && (
         <div className="text-center py-2">
-          <p className="text-xs font-bold text-[var(--accent-cyan)]">{copy.verdict.verdictDone} \u2192</p>
+          <p className="text-xs font-bold text-[var(--accent-cyan)]">{copy?.verdict?.verdictDone || 'Verdict done!'} →</p>
         </div>
       )}
 
@@ -152,7 +171,9 @@ export default function InlineVerdictPanel({ caseData, onVoteSuccess }) {
                 <div className="flex items-center gap-1.5">
                   <Link href={`/user/${v.user.username}`} onClick={(e) => e.stopPropagation()}
                     className="text-[10px] font-bold hover:text-[var(--accent-purple)] transition-colors">@{v.user.username}</Link>
-                  <span className={`text-[9px] font-bold ${SIDE_COLORS[v.side]}`}>{getSideLabel(v.side, languagePreference)}</span>
+                  <span className={`text-[9px] font-bold ${SIDE_COLORS[v.side]}`}>
+                    {v.side === 'creator_note' ? 'Creator' : getSideLabel(v.side, languagePreference)}
+                  </span>
                   <span className="text-[9px] text-[var(--text-muted)]">{timeAgo(v.createdAt)}</span>
                 </div>
                 <div className="text-[11px] text-[var(--text-secondary)] leading-snug mt-0.5">

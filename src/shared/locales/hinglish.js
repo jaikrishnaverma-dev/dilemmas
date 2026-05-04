@@ -1,8 +1,8 @@
 /** Hinglish translations */
 const hinglish = {
   sides: {
-    teri_galti: 'Teri Galti',
-    uski_galti: 'Uski Galti',
+    teri_galti: 'your fault',
+    uski_galti: 'their fault',
     situation_galat: 'Situation Hi Galat',
   },
   buttons: {
@@ -75,11 +75,11 @@ const hinglish = {
   },
   verdict: {
     pickSide: 'Apna side chuno',
-    quickVerdict: 'Quick Verdict',
+    quickVerdict: 'Apna side chuno',
     reasonHint: 'Ek line mein batao — kyu?',
     reasonRequired: 'Reason dena zaroori hai bhai',
     alreadyVoted: 'Tu already vote kar chuka hai',
-    voteSuccess: 'Verdict registered!',
+    voteSuccess: 'Verdict register ho gaya!',
     verdictDone: 'Verdict done! Full results dekho',
     recentVerdicts: 'Recent Verdicts',
     noVerdicts: 'Koi verdict nahi abhi — pehle tu de!',

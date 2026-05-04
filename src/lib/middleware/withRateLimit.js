@@ -4,11 +4,13 @@ import { errorResponse } from '@/lib/apiResponse';
 
 /**
  * Rate limiting middleware HOF.
+ * @param {Function} handler — the route handler to wrap
  * @param {string} endpointKey — unique key for this endpoint type
  * @param {number} maxRequests — max requests per window
  * @param {number} windowSeconds — time window in seconds
+ * @param {string} [limitMessage] — custom message shown when limit is exceeded
  */
-export function withRateLimit(handler, endpointKey = 'default', maxRequests = 30, windowSeconds = 3600) {
+export function withRateLimit(handler, endpointKey = 'default', maxRequests = 30, windowSeconds = 3600, limitMessage = '') {
   return async (request, context) => {
     await connectDB();
 
@@ -22,7 +24,12 @@ export function withRateLimit(handler, endpointKey = 'default', maxRequests = 30
 
     if (existing) {
       if (existing.requestCount >= maxRequests) {
-        return errorResponse('Thoda ruk jao! Rate limit hit. 🛑', 429);
+        // Calculate time remaining until reset
+        const msLeft = existing.expiresAt.getTime() - Date.now();
+        const minsLeft = Math.max(1, Math.ceil(msLeft / 60000));
+
+        const defaultMsg = `Limit reached: max ${maxRequests} requests per ${windowSeconds / 60} minutes. Try again in ~${minsLeft} min ⏳`;
+        return errorResponse(limitMessage || defaultMsg, 429);
       }
       await RateLimit.updateOne({ key }, { $inc: { requestCount: 1 } });
     } else {

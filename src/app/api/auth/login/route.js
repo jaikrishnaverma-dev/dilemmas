@@ -3,9 +3,10 @@ import User from '@/lib/models/User';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/jwt';
 import { successResponse, errorResponse } from '@/lib/apiResponse';
+import { withRateLimit } from '@/lib/middleware/withRateLimit';
 
 /** POST /api/auth/login */
-export async function POST(request) {
+async function login(request) {
   try {
     const body = await request.json();
     const { username, password } = body;
@@ -46,3 +47,5 @@ export async function POST(request) {
     return errorResponse('Login failed', 500);
   }
 }
+
+export const POST = withRateLimit(login, 'login', 10, 3600, 'Bohot zyada login attempts! Ek ghante mein sirf 10 baar try kar sakte ho. Thodi der baad aao 🔐');

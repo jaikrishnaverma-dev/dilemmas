@@ -3,9 +3,10 @@ import User from '@/lib/models/User';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/jwt';
 import { successResponse, errorResponse } from '@/lib/apiResponse';
+import { withRateLimit } from '@/lib/middleware/withRateLimit';
 
 /** POST /api/auth/signup */
-export async function POST(request) {
+async function signup(request) {
   try {
     const body = await request.json();
     const { username, password, email, city, state, gender, ageBracket } = body;
@@ -67,3 +68,5 @@ export async function POST(request) {
     return errorResponse('Signup failed', 500);
   }
 }
+
+export const POST = withRateLimit(signup, 'signup', 5, 3600, 'Ek ghante mein sirf 5 baar signup kar sakte ho. Thodi der baad try karo! ⏳');

@@ -17,7 +17,7 @@ export async function GET(request) {
     await connectDB();
 
     const { searchParams } = new URL(request.url);
-    const since     = searchParams.get('since');
+    const since = searchParams.get('since');
     const countOnly = searchParams.get('countOnly') === 'true';
 
     // ── Lightweight poll: just count new cases since a timestamp ──
@@ -33,11 +33,11 @@ export async function GET(request) {
       return successResponse({ newCount, since }, 'New cases count');
     }
 
-    const page     = Math.max(1, parseInt(searchParams.get('page') || '1'));
-    const limit    = Math.min(20, Math.max(1, parseInt(searchParams.get('limit') || '10')));
-    const sort     = searchParams.get('sort') || 'trending';
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
+    const limit = Math.min(20, Math.max(1, parseInt(searchParams.get('limit') || '10')));
+    const sort = searchParams.get('sort') || 'latest';
     const category = searchParams.get('category');
-    const city     = searchParams.get('city');
+    const city = searchParams.get('city');
 
     // Build query — only live and not expired
     const query = { status: 'live', expiresAt: { $gt: new Date() } };
@@ -55,15 +55,15 @@ export async function GET(request) {
     // Sort options
     let sortOption;
     switch (sort) {
-      case 'latest':   sortOption = { createdAt: -1 }; break;
+      case 'trending': sortOption = { voteCount: -1, createdAt: -1 }; break;
       case 'expiring': sortOption = { expiresAt: 1 }; break;
-      case 'trending': // fall through — default
-      default:         sortOption = { voteCount: -1, createdAt: -1 }; break;
+      case 'latest': // fall through — default
+      default: sortOption = { createdAt: -1 }; break;
     }
 
     const skip = (page - 1) * limit;
     const [cases, total] = await Promise.all([
-      Case.find(query).sort(sortOption).skip(skip).limit(limit).lean(),
+      Case.find(query).select('title context category city shareSlug voteCount expiresAt createdAt userId').sort(sortOption).skip(skip).limit(limit).lean(),
       Case.countDocuments(query),
     ]);
 
@@ -81,7 +81,7 @@ export async function GET(request) {
         return {
           id: c._id,
           title: c.title,
-          context: c.context.substring(0, 120) + (c.context.length > 120 ? '...' : ''),
+          context: c.context,
           category: c.category,
           city: c.city,
           shareSlug: c.shareSlug,
@@ -89,6 +89,7 @@ export async function GET(request) {
           voteSplit,
           expiresAt: c.expiresAt,
           createdAt: c.createdAt,
+          userId: c.userId,
         };
       })
     );

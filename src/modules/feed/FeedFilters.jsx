@@ -2,8 +2,8 @@ import { useAuth } from '@/modules/auth/AuthContext';
 import { Flame, Sparkles, Clock, Heart, Briefcase, Users, GraduationCap, Wallet, Home, Smartphone, Globe, HandHeart } from 'lucide-react';
 
 const FILTERS = [
-  { key: 'trending', icon: Flame },
   { key: 'latest', icon: Sparkles },
+  { key: 'trending', icon: Flame },
   { key: 'expiring', icon: Clock },
 ];
 

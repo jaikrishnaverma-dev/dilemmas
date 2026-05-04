@@ -92,10 +92,17 @@ export default function CaseCard({ caseData, index = 0, isExpanded, onToggleExpa
         {title}
       </h3>
 
-      {/* Context preview */}
-      <p className="text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-2">
-        {context}
-      </p>
+      {/* Context preview — render rich HTML with line-clamp */}
+      {context?.includes('<') ? (
+        <div
+          className="prose-editor prose-editor--preview text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-2"
+          dangerouslySetInnerHTML={{ __html: context }}
+        />
+      ) : (
+        <p className="text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-2">
+          {context}
+        </p>
+      )}
 
       {/* Split bar */}
       <VerdictSplitBar voteSplit={voteSplit} totalVotes={totalVotes} />
@@ -136,7 +143,7 @@ export default function CaseCard({ caseData, index = 0, isExpanded, onToggleExpa
       {/* Double-click hint */}
       {isExpanded && (
         <p className="text-center text-[10px] text-[var(--text-muted)] font-medium pt-1">
-          {copy.feed.doubleTapHint} \u2192
+          {copy.verdict.doubleTapHint} →
         </p>
       )}
     </div>

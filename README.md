@@ -83,6 +83,26 @@ Open [http://localhost:3000](http://localhost:3000) to see the platform.
 
 ---
 
+## 🛡️ Rate Limits
+
+All write-sensitive endpoints are rate-limited to protect the platform from abuse, spam, and brute-force attacks. Limits are tracked **per user** (if logged in) or **per IP address** (if anonymous).
+
+| Endpoint | Limit | Window | What Happens When Exceeded |
+| :--- | :---: | :---: | :--- |
+| **Signup** (`POST /api/auth/signup`) | 5 | 1 hour | "Ek ghante mein sirf 5 baar signup kar sakte ho. Thodi der baad try karo! ⏳" |
+| **Login** (`POST /api/auth/login`) | 10 | 1 hour | "Bohot zyada login attempts! Ek ghante mein sirf 10 baar try kar sakte ho. Thodi der baad aao 🔐" |
+| **Forgot Password** (`POST /api/auth/forgot-password`) | 3 | 1 hour | "Password reset ke liye ek ghante mein sirf 3 baar request kar sakte ho. Apna email inbox check karo! 📧" |
+| **Submit Case** (`POST /api/cases`) | 5 | 1 hour | "Ek ghante mein sirf 5 cases submit kar sakte ho. Quality over quantity! ✍️" |
+| **Cast Verdict** (`POST /api/verdicts`) | 30 | 1 hour | "Ek ghante mein sirf 30 verdicts de sakte ho. Thodi der baad aur cases judge karo! ⚖️" |
+
+**Technical Details:**
+- Rate limits are stored in MongoDB with a TTL (time-to-live) index, so expired records are automatically cleaned up.
+- The middleware (`src/lib/middleware/withRateLimit.js`) wraps any route handler as a higher-order function (HOF).
+- HTTP status code `429 Too Many Requests` is returned when the limit is exceeded.
+- All public GET routes (feed, search, leaderboard) are **not** rate-limited to allow unrestricted browsing.
+
+---
+
 ## 📂 Project Structure
 
 - `src/app`: Next.js App Router pages and API routes.
@@ -90,8 +110,11 @@ Open [http://localhost:3000](http://localhost:3000) to see the platform.
 - `src/shared`: 
     - `locales`: Unicode-safe translation files (`en`, `hi`, `te`, `hinglish`).
     - `components`: Reusable UI elements (BottomNav, TopBar, VerdictSplitBar).
-    - `utils`: i18n helpers, time formatting, api client.
-- `src/lib`: Database models and server-side logic.
+    - `utils`: i18n helpers, time formatting, api client, text processing.
+- `src/lib`:
+    - `models`: Mongoose schemas (User, Case, Verdict, JudgeScore, RateLimit, Notification).
+    - `middleware`: Server-side HOFs (`withAuth`, `withRateLimit`).
+    - `jwt.js`, `mongodb.js`, `apiResponse.js`: Core utilities.
 
 ---
 

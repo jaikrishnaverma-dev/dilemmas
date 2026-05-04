@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import TopBar from '@/shared/components/TopBar';
 import BottomNav from '@/shared/components/BottomNav';
+import { api } from '@/shared/api/apiClient';
 import { useAuth } from '@/modules/auth/AuthContext';
 import RichTextEditor from '@/shared/components/RichTextEditor';
 
@@ -53,7 +54,7 @@ export default function SubmitCasePage() {
   const [success, setSuccess] = useState(null);
 
   const handleSubmit = async () => {
-    if (!isLoggedIn) { setError(`${copy.auth.loginRequired} \uD83D\uDD10`); return; }
+    if (!isLoggedIn) { setError(`${copy.auth.loginRequired} 🔐`); return; }
     setSubmitting(true);
     setError('');
 
@@ -89,7 +90,7 @@ export default function SubmitCasePage() {
                   bg-gradient-to-r from-[var(--accent-orange)] to-[var(--accent-pink)]
                   active:scale-95 transition-all shadow-lg shadow-[var(--accent-pink)]/20"
               >
-                {copy.buttons.viewCase} \uD83D\uDC40
+                {copy.buttons.viewCase} 👀
               </button>
               <button
                 onClick={() => router.push('/')}
@@ -97,7 +98,7 @@ export default function SubmitCasePage() {
                   bg-[var(--bg-elevated)] text-[var(--text-secondary)]
                   active:scale-95 transition-all"
               >
-                {copy.buttons.goToFeed} \uD83D\uDD25
+                {copy.buttons.goToFeed} 🔥
               </button>
             </div>
           </div>
@@ -163,7 +164,7 @@ export default function SubmitCasePage() {
               <AlignLeft size={20} />
               <h2 className="text-lg font-extrabold">{copy.submission.step2Title}</h2>
             </div>
-            <p className="text-xs text-[var(--text-muted)]">{copy.submission.step2Hint} \u2014 {copy.submission.step2RichHint}</p>
+            <p className="text-xs text-[var(--text-muted)]">{copy.submission.step2Hint} — {copy.submission.step2RichHint}</p>
             <RichTextEditor
               content={context}
               onUpdate={(html, wc) => { setContext(html); setWordCount(wc); }}

@@ -61,7 +61,7 @@ async function createCase(request) {
   }
 }
 
-export const POST = withAuth(withRateLimit(createCase, 'case_submit', 5, 3600));
+export const POST = withAuth(withRateLimit(createCase, 'case_submit', 5, 3600, 'Ek ghante mein sirf 5 cases submit kar sakte ho. Quality over quantity! ✍️'));
 
 /** GET /api/cases — Get cases list (for categories page, etc.) */
 export async function GET(request) {
@@ -76,7 +76,7 @@ export async function GET(request) {
     const cases = await Case.find(query)
       .sort({ createdAt: -1 })
       .limit(20)
-      .select('title category city voteCount shareSlug expiresAt createdAt')
+      .select('title category city voteCount shareSlug expiresAt createdAt userId')
       .lean();
 
     return successResponse({ cases }, 'Cases loaded');

@@ -183,6 +183,38 @@ body {
   font-style: italic;
 }
 
+/* Preview variant — compact for feed cards with line-clamp */
+.prose-editor--preview {
+  overflow: hidden;
+}
+.prose-editor--preview p,
+.prose-editor--preview ul,
+.prose-editor--preview ol,
+.prose-editor--preview li,
+.prose-editor--preview blockquote {
+  margin: 0;
+  padding: 0;
+  display: inline;
+}
+.prose-editor--preview ul,
+.prose-editor--preview ol {
+  list-style: none;
+}
+.prose-editor--preview li::after {
+  content: ' · ';
+  color: var(--text-muted);
+}
+.prose-editor--preview li:last-child::after {
+  content: '';
+}
+.prose-editor--preview br {
+  content: '';
+  display: inline;
+}
+.prose-editor--preview br::after {
+  content: ' ';
+}
+
 /* TipTap placeholder */
 .ProseMirror .is-editor-empty:first-child::before,
 .ProseMirror p.is-editor-empty:first-child::before {
